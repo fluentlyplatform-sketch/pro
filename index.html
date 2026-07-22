@@ -23,7 +23,7 @@
     header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 6px; }
     header p { color: var(--text-muted); font-size: 0.9rem; }
 
-    /* واجهة إدخال الرمز المكون من 3 أرقام */
+    /* واجهة إدخال الرمز */
     #passcode-screen {
       background-color: var(--card-bg);
       border: 1px solid #334155;
@@ -38,11 +38,11 @@
     .pass-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
 
     .pass-input {
-      width: 140px;
+      width: 160px;
       padding: 12px;
-      font-size: 2rem;
+      font-size: 1.8rem;
       text-align: center;
-      letter-spacing: 8px;
+      letter-spacing: 4px;
       border-radius: 12px;
       border: 2px solid var(--primary);
       background: #0f172a;
@@ -102,10 +102,10 @@
   <!-- واجهة إدخال الرمز -->
   <div id="passcode-screen">
     <div class="pass-title">رمز الدخول للمنصة 🔑</div>
-    <div class="pass-desc">أدخل الرمز المكون من 3 أرقام والموجود في بوت التليجرام:</div>
-    <input type="number" id="passcode-input" class="pass-input" placeholder="123" oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);">
+    <div class="pass-desc">أدخل رمز الدخول الموجود في بوت التليجرام:</div>
+    <input type="text" id="passcode-input" class="pass-input" placeholder="***">
     <button id="verify-btn" class="btn-verify" onclick="verifyPasscode()">دخول المنصة 🚀</button>
-    <div id="error-msg" class="error-msg">❌ الرمز غير صحيح أو انتهت صلاحيته، يرجى التأكد من الرمز في البوت.</div>
+    <div id="error-msg" class="error-msg">❌ الرمز غير صحيح، يرجى التثبت من الرمز المطلوب في البوت.</div>
   </div>
 
   <!-- المحتوى الرئيسي -->
@@ -134,6 +134,9 @@
 </div>
 
 <script>
+  // 🔑 الرمز الثابت للمنصة (تأكد أنه مطاق للرمز الموجود في التليجرام)
+  const SECRET_PASSCODE = "777";
+
   const sentencesData = {
     restaurant: [
       { en: "A table for two, please.", ar: "طاولة لشخصين من فضلك." },
@@ -179,22 +182,11 @@
     ]
   };
 
-  // دالة حساب الرمز المتغير المعتمد على الدقائق
-  function calculateCode(minuteOffset = 0) {
-    const minuteBucket = Math.floor(Date.now() / 60000) + minuteOffset;
-    const secretSeed = 789;
-    return (((minuteBucket * secretSeed) % 900) + 100).toString();
-  }
-
   function verifyPasscode() {
     const inputVal = document.getElementById('passcode-input').value.trim();
     const errorMsg = document.getElementById('error-msg');
 
-    // قبول الرمز للدقيقة الحالية أو الدقيقة السابقة مباشرة (عشان ما يواجه المستخدم مشكلة لو تغيرت الدقيقة أثناء الكتابة)
-    const validCodeCurrent = calculateCode(0);
-    const validCodePrevious = calculateCode(-1);
-
-    if (inputVal === validCodeCurrent || inputVal === validCodePrevious) {
+    if (inputVal === SECRET_PASSCODE) {
       document.getElementById('passcode-screen').style.display = 'none';
       document.getElementById('main-content').style.display = 'block';
       renderSentences('restaurant');
