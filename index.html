@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تعلم 30 جملة إنجليزية تفاعلية</title>
+  <style>
+    /* حماية ضد التحديد والنسخ */
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f4f7f6;
+      margin: 0;
+      padding: 15px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    .category-select {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      background-color: #fff;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .sentence-card {
+      background: #fafafa;
+      border-right: 4px solid #3498db;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .en-text {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #2c3e50;
+      direction: ltr;
+      text-align: left;
+    }
+
+    .ar-text {
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    .audio-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .btn-audio {
+      background-color: #e8f4fd;
+      color: #2980b9;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s;
+    }
+
+    .btn-audio:hover {
+      background-color: #d0e7fb;
+    }
+
+    .btn-slow {
+      background-color: #fef5e7;
+      color: #d35400;
+    }
+
+    .btn-slow:hover {
+      background-color: #fdebd0;
+    }
+
+    #unauthorized, #loading {
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    #unauthorized {
+      display: none;
+      color: #c0392b;
+    }
+
+    .status-card {
+      background: #fdf2e9;
+      border: 1px solid #e67e22;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: 40px auto;
+    }
+  </style>
+
+  <!-- Firebase Web SDK v10 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyBulqBdROV82pEgo4t2kV3V2WGAPEg1wV8",
+  authDomain: "fluently-platform.firebaseapp.com",
+  projectId: "fluently-platform",
+  storageBucket: "fluently-platform.firebasestorage.app",
+  messagingSenderId: "288624999010",
+  appId: "1:288624999010:web:86b38b874fdb5a8bbcaf3b"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // نظام التحقق الآمن مع التدمير الذاتي للرمز
+    async function verifyAccess() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+
+      // 1. التحقق أولاً هل الجهاز سبق وتم تفعيله ومصادقته محلياً
+      if (localStorage.getItem('ur10_verified_user') === 'true') {
+        showMainApp();
+        return;
+      }
+
+      // 2. إذا لم يكن مفعلاً محلياً ولم يمتلك رمزاً في الرابط
+      if (!token) {
+        denyAccess("لم يتم العثور على رمز وصول. يرجى الدخول عبر بوت التليجرام.");
+        return;
+      }
+
+      try {
+        const docRef = doc(db, "access_tokens", token);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          // الرمز صحيح وموجود -> تفعيل الجهاز محلياً فوراً
+          localStorage.setItem('ur10_verified_user', 'true');
+          
+          // حرق/حذف الرمز من Firestore لمنع أي شخص آخر من استخدام نفس الرابط
+          await deleteDoc(docRef);
+
+          showMainApp();
+        } else {
+          denyAccess("هذا الرابط مخصص لشخص واحد فقط وقد تم استخدامه سابقاً، أو انتهت صلاحيته.");
+        }
+      } catch (e) {
+        denyAccess("حدث خطأ في الاتصال بالخادم. يرجى إعادة المحاولة من التليجرام.");
+      }
+    }
+
+    function showMainApp() {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("unauthorized").style.display = "none";
+      document.getElementById("content-area").style.display = "block";
+    }
+
+    function denyAccess(message) {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("content-area").style.display = "none";
+      document.getElementById("reason-text").innerText = message;
+      document.getElementById("unauthorized").style.display = "block";
+    }
+
+    window.addEventListener('DOMContentLoaded', verifyAccess);
+  </script>
+</head>
+<body>
+
+  <!-- شاشة التحميل -->
+  <div id="loading">
+    <h2>⏳ جاري التحقق من الاشتراك...</h2>
+  </div>
+
+  <!-- شاشة الحظر ومنع الدخول -->
+  <div id="unauthorized">
+    <div class="status-card">
+      <h2>⛔ عذراً، لا يمكنك الوصول للصفحة</h2>
+      <p id="reason-text">يرجى الدخول حصراً عبر زر "أهم 30 جملة" الذين أشترو الحزمة.</p>
+    </div>
+  </div>
+
+  <!-- المنصة الرئيسية -->
+  <div class="container" id="content-area" style="display: none;">
+    <h1>🎓 منصة نطق الجمل الإنجليزية التفاعلية</h1>
+
+    <select class="category-select" id="categorySelect" onchange="loadCategory()">
+      <option value="work">🏢 العمل والدراسة (1 - 5)</option>
+      <option value="shopping">🛍️ التسوق (6 - 10)</option>
+      <option value="travel">✈️ السفر والمواصلات (11 - 15)</option>
+      <option value="restaurant">🍽️ المطعم (16 - 20)</option>
+      <option value="dating">🤝 التعارف والتواصل (21 - 25)</option>
+      <option value="hospital">🏥 المستشفى والأدوية (26 - 30)</option>
+    </select>
+
+    <div id="sentencesList"></div>
+  </div>
+
+  <script>
+    // قاعدة البيانات الكامـــــــــلة (30 جملة مقسمة على 6 أقسام)
+    const sentencesData = {
+      work: [
+        { en: "I need to complete this task by tomorrow.", ar: "أحتاج إلى إكمال هذه المهمة بحلول الغد." },
+        { en: "Could you please send me the updated report?", ar: "هل يمكنك إرسال التقرير المحدث لي من فضلك؟" },
+        { en: "When is the deadline for this project?", ar: "متى الموعد النهائي لهذا المشروع؟" },
+        { en: "Let's schedule a meeting to discuss the details.", ar: "دعنا نحدد موعدًا للاجتماع لمناقشة التفاصيل." },
+        { en: "I appreciate your assistance with this matter.", ar: "أقدر مساعدتك في هذا الأمر." }
+      ],
+      shopping: [
+        { en: "How much does this item cost?", ar: "بكم هذا المنتج؟" },
+        { en: "Do you have this in a smaller size?", ar: "هل لديك هذا بمقاس أصغر؟" },
+        { en: "Where is the fitting room?", ar: "أين غرفة قياس الملابس؟" },
+        { en: "Can I pay by credit card?", ar: "هل يمكنني الدفع بواسطة بطاقة الائتمان؟" },
+        { en: "Is there any discount on this product?", ar: "هل هناك أي خصم على هذا المنتج؟" }
+      ],
+      travel: [
+        { en: "Where is the nearest subway station?", ar: "أين أقرب محطة قطار أنفاق؟" },
+        { en: "I would like to book a flight ticket.", ar: "أود حجز تذكرة طيران." },
+        { en: "Could you help me with my luggage?", ar: "هل يمكنك مساعدتي في أمتعتي؟" },
+        { en: "How long does it take to reach the airport?", ar: "كم يستغرق من الوقت للوصول إلى المطار؟" },
+        { en: "I am looking for my hotel address.", ar: "أنا أبحث عن عنوان الفندق الخاص بي." }
+      ],
+      restaurant: [
+        { en: "I would like to reserve a table for two.", ar: "أود حجز طاولة لشخصين." },
+        { en: "May I see the menu, please?", ar: "هل يمكنني رؤية قائمة الطعام من فضلك؟" },
+        { en: "What do you recommend for dinner?", ar: "بماذا توصي للوجبة الرئيسية؟" },
+        { en: "Could we have the bill, please?", ar: "هل يمكننا الحصول على الفاتورة من فضلك؟" },
+        { en: "This food taste absolutely delicious.", ar: "هذا الطعام لذيذ جداً." }
+      ],
+      dating: [
+        { en: "It is very nice to meet you.", ar: "إنه لمن الدواعي سروري التعرّف عليك." },
+        { en: "What do you like to do in your free time?", ar: "ماذا تحب أن تفعل في وقت فراغك؟" },
+        { en: "Would you like to grab a cup of coffee?", ar: "هل ترغب في شرب فنجان من القهوة معي؟" },
+        { en: "Tell me more about your interests.", ar: "أخبرني المزيد عن اهتماماتك." },
+        { en: "I really enjoyed spending time with you.", ar: "لقد استمتعت حقاً بقضاء الوقت معك." }
+      ],
+      hospital: [
+        { en: "I need to see a doctor as soon as possible.", ar: "أحتاج إلى رؤية طبيب في أسرع وقت ممكن." },
+        { en: "Where can I find the nearest pharmacy?", ar: "أين يمكنني أن أجد أقرب صيدلية؟" },
+        { en: "I have a severe headache and fever.", ar: "لدي صداع شديد وارتفاع في الحرارة." },
+        { en: "How often should I take this medication?", ar: "كم مرة يجب أن آخذ هذا الدواء؟" },
+        { en: "Is there an emergency room nearby?", ar: "هل توجد غرفة طوارئ بالقرب من هنا؟" }
+      ]
+    };
+
+    function loadCategory() {
+      const cat = document.getElementById("categorySelect").value;
+      const list = sentencesData[cat] || [];
+      const container = document.getElementById("sentencesList");
+      container.innerHTML = "";
+
+      list.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "sentence-card";
+        card.innerHTML = `
+          <div class="en-text">${index + 1}. ${item.en}</div>
+          <div class="ar-text">${item.ar}</div>
+          <div class="audio-controls">
+            <button class="btn-audio" onclick="speak('${escapeHtml(item.en)}', 1.0)">🔊 نطق عادي</button>
+            <button class="btn-audio btn-slow" onclick="speak('${escapeHtml(item.en)}', 0.5)">🐢 نطق بطيء</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // محرك الصوت الداخلي ذو السرعات
+    function speak(text, rate) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = rate;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/'/g, "\\'");
+    }
+
+    window.onload = loadCategory;
+  </script>
+</body>
+</html>
