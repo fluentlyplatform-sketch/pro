@@ -5,73 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منصة التحدث بطلاقة | أهم الجمل اليومية</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-  
-  <!-- Firebase JS SDK v9 (Modular) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-    // ضِع إعدادات فايربيس الخاصة بك هنا
-const firebaseConfig = {
-  apiKey: "AIzaSyBulqBdROV82pEgo4t2kV3V2WGAPEg1wV8",
-  authDomain: "fluently-platform.firebaseapp.com",
-  projectId: "fluently-platform",
-  storageBucket: "fluently-platform.firebasestorage.app",
-  messagingSenderId: "288624999010",
-  appId: "1:288624999010:web:86b38b874fdb5a8bbcaf3b"
-};
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.verifyPasscode = async function() {
-      const codeInput = document.getElementById('passcode-input').value.trim().toUpperCase();
-      const errorMsg = document.getElementById('error-msg');
-      const btn = document.getElementById('verify-btn');
-
-      if (!codeInput) return;
-
-      btn.disabled = true;
-      btn.innerText = "جاري التحقق...";
-      errorMsg.style.display = 'none';
-
-      try {
-        const docRef = doc(db, "access_codes", codeInput);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          const expiresAt = parseInt(data.expiresAt, 10);
-
-          if (Date.now() < expiresAt) {
-            // حذف الرمز لمنع إعادة استخدامه من شخص آخر
-            await deleteDoc(docRef);
-
-            // إظهار المنصة
-            document.getElementById('passcode-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            window.renderSentences('restaurant');
-          } else {
-            // حذف الرمز المنتهي
-            await deleteDoc(docRef);
-            errorMsg.innerText = "❌ انتهت صلاحية الرمز! يرجى طلب رمز جديد من البوت.";
-            errorMsg.style.display = 'block';
-          }
-        } else {
-          errorMsg.innerText = "❌ الرمز غير صحيح أو تم استخدامه سابقاً!";
-          errorMsg.style.display = 'block';
-        }
-      } catch (e) {
-        console.error(e);
-        errorMsg.innerText = "حدث خطأ أثناء التحقق، حاول مرة أخرى.";
-        errorMsg.style.display = 'block';
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "دخول المنصة 🚀";
-      }
-    };
-  </script>
-
   <style>
     :root {
       --primary: #4F46E5;
@@ -90,7 +23,7 @@ const firebaseConfig = {
     header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 6px; }
     header p { color: var(--text-muted); font-size: 0.9rem; }
 
-    /* شاشة إدخال رمز فايربيس */
+    /* واجهة إدخال الرمز المكون من 3 أرقام */
     #passcode-screen {
       background-color: var(--card-bg);
       border: 1px solid #334155;
@@ -105,24 +38,23 @@ const firebaseConfig = {
     .pass-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
 
     .pass-input {
-      width: 200px;
+      width: 140px;
       padding: 12px;
-      font-size: 1.6rem;
+      font-size: 2rem;
       text-align: center;
-      letter-spacing: 6px;
-      border-radius: 10px;
+      letter-spacing: 8px;
+      border-radius: 12px;
       border: 2px solid var(--primary);
       background: #0f172a;
       color: #fff;
       outline: none;
       font-weight: bold;
-      text-transform: uppercase;
     }
 
     .btn-verify {
       display: block;
       width: 100%;
-      max-width: 220px;
+      max-width: 200px;
       margin: 20px auto 0;
       padding: 12px;
       background: var(--primary);
@@ -170,10 +102,10 @@ const firebaseConfig = {
   <!-- واجهة إدخال الرمز -->
   <div id="passcode-screen">
     <div class="pass-title">رمز الدخول للمنصة 🔑</div>
-    <div class="pass-desc">أدخل الرمز المكون من 6 أرقام/حروف والمحصل عليه من التليجرام:</div>
-    <input type="text" id="passcode-input" class="pass-input" maxlength="6" placeholder="X8K2M1">
+    <div class="pass-desc">أدخل الرمز المكون من 3 أرقام والموجود في بوت التليجرام:</div>
+    <input type="number" id="passcode-input" class="pass-input" placeholder="123" oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);">
     <button id="verify-btn" class="btn-verify" onclick="verifyPasscode()">دخول المنصة 🚀</button>
-    <div id="error-msg" class="error-msg"></div>
+    <div id="error-msg" class="error-msg">❌ الرمز غير صحيح أو انتهت صلاحيته، يرجى التأكد من الرمز في البوت.</div>
   </div>
 
   <!-- المحتوى الرئيسي -->
@@ -247,7 +179,31 @@ const firebaseConfig = {
     ]
   };
 
-  window.renderSentences = function(category) {
+  // دالة حساب الرمز المتغير المعتمد على الدقائق
+  function calculateCode(minuteOffset = 0) {
+    const minuteBucket = Math.floor(Date.now() / 60000) + minuteOffset;
+    const secretSeed = 789;
+    return (((minuteBucket * secretSeed) % 900) + 100).toString();
+  }
+
+  function verifyPasscode() {
+    const inputVal = document.getElementById('passcode-input').value.trim();
+    const errorMsg = document.getElementById('error-msg');
+
+    // قبول الرمز للدقيقة الحالية أو الدقيقة السابقة مباشرة (عشان ما يواجه المستخدم مشكلة لو تغيرت الدقيقة أثناء الكتابة)
+    const validCodeCurrent = calculateCode(0);
+    const validCodePrevious = calculateCode(-1);
+
+    if (inputVal === validCodeCurrent || inputVal === validCodePrevious) {
+      document.getElementById('passcode-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      renderSentences('restaurant');
+    } else {
+      errorMsg.style.display = 'block';
+    }
+  }
+
+  function renderSentences(category) {
     const container = document.getElementById('sentences-container');
     container.innerHTML = '';
 
@@ -265,7 +221,7 @@ const firebaseConfig = {
       `;
       container.appendChild(card);
     });
-  };
+  }
 
   function switchCategory(cat) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
