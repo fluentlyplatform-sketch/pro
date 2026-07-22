@@ -24,26 +24,60 @@
     header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 6px; }
     header p { color: var(--text-muted); font-size: 0.9rem; }
 
-    /* شاشة حظر الوصول */
+    /* ==================== تصميم بطاقة الخطأ المطابق للصورة ==================== */
     #access-denied {
-      display: none; text-align: center; background: #331010; border: 1px solid #7f1d1d;
-      padding: 30px; border-radius: 16px; margin-top: 50px;
+      display: none;
+      background-color: #210a0e;
+      border: 1px solid #7f1d1d;
+      border-radius: 16px;
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: 40px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
-    #access-denied h2 { color: #ef4444; margin-bottom: 10px; }
 
-    /* تبويبات الأقسام */
+    .error-title {
+      color: #f87171;
+      font-size: 1.8rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .error-title .badge-icon {
+      background-color: #ef4444;
+      color: #210a0e;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .error-desc {
+      color: #f1f5f9;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    /* ==================== باقي التنسيقات ==================== */
     .tabs-wrapper { overflow-x: auto; padding-bottom: 8px; margin-bottom: 15px; }
     .tabs { display: flex; gap: 8px; min-width: max-content; background: var(--card-bg); padding: 6px; border-radius: 12px; }
     .tab-btn { padding: 8px 16px; border: none; background: transparent; color: var(--text-muted); font-weight: bold; cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 0.9rem; }
     .tab-btn.active { background: var(--primary); color: #fff; }
 
-    /* قائمة الجمل */
     .sentences-list { display: flex; flex-direction: column; gap: 12px; }
     .sentence-card { background: var(--card-bg); border: 1px solid #334155; padding: 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; }
     .en-text { font-size: 1.15rem; font-weight: 700; color: var(--accent); direction: ltr; text-align: left; }
     .ar-text { font-size: 0.95rem; color: #E2E8F0; }
     
-    /* أزرار التحكم بالصوت */
     .actions { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
     
     .btn-audio {
@@ -62,10 +96,15 @@
 
 <div class="container">
   
-  <!-- شاشة الحظر للأمان -->
+  <!-- بطاقة رفض الوصول المطابقة للديزاين المرفق -->
   <div id="access-denied">
-    <h2>⛔ عذراً، الوصول غير متاح!</h2>
-    <p> هذا الرابط مخصص لمشترين الحزمة  اذا كنت مشتري يرجى العودة والضغط على زر 30 جمل مره أخرى.</p>
+    <div class="error-title">
+      <span>عذراً، الوصول غير متاح!</span>
+      <span class="badge-icon">⛔</span>
+    </div>
+    <div class="error-desc">
+      هذا الرابط مخصص لمشترين الحزمة اذا كنت مشتري يرجى العودة والضغط على زر 30 جمل مره أخرى.
+    </div>
   </div>
 
   <!-- المحتوى الرئيسي للموقع -->
@@ -142,23 +181,37 @@
     ]
   };
 
-  // ==================== نظام التحقق والأمان ====================
+  // ==================== نظام التحقق والمؤقت والأمان ====================
   function checkSecurity() {
     const urlParams = new URLSearchParams(window.location.search);
     const uid = urlParams.get('uid');
+    const time = urlParams.get('t');
     const auth = urlParams.get('auth');
 
-    if (!uid || !auth) {
+    // 1. التحقق من التمرير المكتمل للمتغيرات
+    if (!uid || !time || !auth) {
       showDenied();
       return;
     }
 
+    // 2. التحقق من انتهاء الصلاحية (5 دقائق = 300,000 مللي ثانية)
+    const currentTime = Date.now();
+    const linkTime = parseInt(time, 10);
+    const maxAge = 5 * 60 * 1000;
+
+    if (isNaN(linkTime) || (currentTime - linkTime) > maxAge) {
+      showDenied();
+      return;
+    }
+
+    // 3. التحقق من بصمة الجهاز لمنع تداول الرابط
     const savedUid = localStorage.getItem('fluently_user');
     if (savedUid && savedUid !== uid) {
       showDenied();
       return;
     }
 
+    // النجاح
     localStorage.setItem('fluently_user', uid);
     document.getElementById('main-content').style.display = 'block';
     renderSentences('restaurant');
@@ -169,7 +222,7 @@
     document.getElementById('main-content').style.display = 'none';
   }
 
-  // ==================== عرض الجمل ومحرك الصوت ====================
+  // ==================== عرض المحتوى والنطق الصوتي ====================
   function renderSentences(category) {
     const container = document.getElementById('sentences-container');
     container.innerHTML = '';
