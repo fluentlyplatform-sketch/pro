@@ -5,6 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منصة التحدث بطلاقة | أهم الجمل اليومية</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <!-- Firebase JS SDK v9 (Modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // ضِع إعدادات فايربيس الخاصة بك هنا
+const firebaseConfig = {
+  apiKey: "AIzaSyBulqBdROV82pEgo4t2kV3V2WGAPEg1wV8",
+  authDomain: "fluently-platform.firebaseapp.com",
+  projectId: "fluently-platform",
+  storageBucket: "fluently-platform.firebasestorage.app",
+  messagingSenderId: "288624999010",
+  appId: "1:288624999010:web:86b38b874fdb5a8bbcaf3b"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.verifyPasscode = async function() {
+      const codeInput = document.getElementById('passcode-input').value.trim().toUpperCase();
+      const errorMsg = document.getElementById('error-msg');
+      const btn = document.getElementById('verify-btn');
+
+      if (!codeInput) return;
+
+      btn.disabled = true;
+      btn.innerText = "جاري التحقق...";
+      errorMsg.style.display = 'none';
+
+      try {
+        const docRef = doc(db, "access_codes", codeInput);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const expiresAt = parseInt(data.expiresAt, 10);
+
+          if (Date.now() < expiresAt) {
+            // حذف الرمز لمنع إعادة استخدامه من شخص آخر
+            await deleteDoc(docRef);
+
+            // إظهار المنصة
+            document.getElementById('passcode-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            window.renderSentences('restaurant');
+          } else {
+            // حذف الرمز المنتهي
+            await deleteDoc(docRef);
+            errorMsg.innerText = "❌ انتهت صلاحية الرمز! يرجى طلب رمز جديد من البوت.";
+            errorMsg.style.display = 'block';
+          }
+        } else {
+          errorMsg.innerText = "❌ الرمز غير صحيح أو تم استخدامه سابقاً!";
+          errorMsg.style.display = 'block';
+        }
+      } catch (e) {
+        console.error(e);
+        errorMsg.innerText = "حدث خطأ أثناء التحقق، حاول مرة أخرى.";
+        errorMsg.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "دخول المنصة 🚀";
+      }
+    };
+  </script>
+
   <style>
     :root {
       --primary: #4F46E5;
@@ -23,50 +90,55 @@
     header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 6px; }
     header p { color: var(--text-muted); font-size: 0.9rem; }
 
-    /* بطاقة مرفوض الدخول (نفس الديزاين تماماً) */
-    #access-denied {
-      display: none;
-      background-color: #210a0e;
-      border: 1px solid #7f1d1d;
+    /* شاشة إدخال رمز فايربيس */
+    #passcode-screen {
+      background-color: var(--card-bg);
+      border: 1px solid #334155;
       border-radius: 16px;
-      padding: 30px 20px;
+      padding: 35px 20px;
       text-align: center;
       margin-top: 40px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     }
 
-    .error-title {
-      color: #f87171;
-      font-size: 1.8rem;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
+    .pass-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
+    .pass-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
 
-    .error-title .badge-icon {
-      background-color: #ef4444;
-      color: #210a0e;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
+    .pass-input {
+      width: 200px;
+      padding: 12px;
+      font-size: 1.6rem;
+      text-align: center;
+      letter-spacing: 6px;
+      border-radius: 10px;
+      border: 2px solid var(--primary);
+      background: #0f172a;
+      color: #fff;
+      outline: none;
       font-weight: bold;
+      text-transform: uppercase;
     }
 
-    .error-desc {
-      color: #f1f5f9;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      font-weight: 400;
+    .btn-verify {
+      display: block;
+      width: 100%;
+      max-width: 220px;
+      margin: 20px auto 0;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
     }
+    .btn-verify:hover { background: #4338ca; }
 
-    /* أقسام وجمل المنصة */
+    .error-msg { color: #f87171; font-size: 0.9rem; margin-top: 15px; display: none; }
+
+    /* أقسام المنصة والجمل */
     .tabs-wrapper { overflow-x: auto; padding-bottom: 8px; margin-bottom: 15px; }
     .tabs { display: flex; gap: 8px; min-width: max-content; background: var(--card-bg); padding: 6px; border-radius: 12px; }
     .tab-btn { padding: 8px 16px; border: none; background: transparent; color: var(--text-muted); font-weight: bold; cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 0.9rem; }
@@ -95,16 +167,16 @@
 
 <div class="container">
   
-  <div id="access-denied">
-    <div class="error-title">
-      <span>عذراً، الوصول غير متاح!</span>
-      <span class="badge-icon">⛔</span>
-    </div>
-    <div class="error-desc">
-      هذا الرابط مخصص لمشترين الحزمة اذا كنت مشتري يرجى العودة والضغط على زر 30 جمل مره أخرى.
-    </div>
+  <!-- واجهة إدخال الرمز -->
+  <div id="passcode-screen">
+    <div class="pass-title">رمز الدخول للمنصة 🔑</div>
+    <div class="pass-desc">أدخل الرمز المكون من 6 أرقام/حروف والمحصل عليه من التليجرام:</div>
+    <input type="text" id="passcode-input" class="pass-input" maxlength="6" placeholder="X8K2M1">
+    <button id="verify-btn" class="btn-verify" onclick="verifyPasscode()">دخول المنصة 🚀</button>
+    <div id="error-msg" class="error-msg"></div>
   </div>
 
+  <!-- المحتوى الرئيسي -->
   <div id="main-content" style="display: none;">
     <header>
       <h1>منصة الجمل الإنجليزية التفاعلية ✨</h1>
@@ -175,40 +247,7 @@
     ]
   };
 
-  // نظام حماية الأجهزة والأشخاص
-  function checkSecurity() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const access = urlParams.get('access');
-
-    // 1. إذا كان الرابط يفتقر لتوكين الدخول
-    if (!access) {
-      showDenied();
-      return;
-    }
-
-    try {
-      // فك التشفير والتأكد أنه كود شرعي قادم من التليجرام
-      const decoded = atob(access);
-      if (!decoded.includes('_fluently_access')) {
-        showDenied();
-        return;
-      }
-
-      // إذا مر الشق الأول بنجاح، يُفتح المحتوى فوراً للمشترك
-      document.getElementById('main-content').style.display = 'block';
-      renderSentences('restaurant');
-
-    } catch(e) {
-      showDenied();
-    }
-  }
-
-  function showDenied() {
-    document.getElementById('access-denied').style.display = 'block';
-    document.getElementById('main-content').style.display = 'none';
-  }
-
-  function renderSentences(category) {
+  window.renderSentences = function(category) {
     const container = document.getElementById('sentences-container');
     container.innerHTML = '';
 
@@ -226,7 +265,7 @@
       `;
       container.appendChild(card);
     });
-  }
+  };
 
   function switchCategory(cat) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -243,8 +282,6 @@
   }
 
   function escapeQuote(str) { return str.replace(/'/g, "\\'"); }
-
-  window.onload = checkSecurity;
 </script>
 
 </body>
