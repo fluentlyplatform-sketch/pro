@@ -24,7 +24,7 @@
     header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 6px; }
     header p { color: var(--text-muted); font-size: 0.9rem; }
 
-    /* ==================== تصميم بطاقة الخطأ المطابق للصورة ==================== */
+    /* بطاقة مرفوض الدخول (طابق للبطاقة المرفقة في الصورة) */
     #access-denied {
       display: none;
       background-color: #210a0e;
@@ -67,7 +67,7 @@
       font-weight: 400;
     }
 
-    /* ==================== باقي التنسيقات ==================== */
+    /* التنسيقات العامة للموقع */
     .tabs-wrapper { overflow-x: auto; padding-bottom: 8px; margin-bottom: 15px; }
     .tabs { display: flex; gap: 8px; min-width: max-content; background: var(--card-bg); padding: 6px; border-radius: 12px; }
     .tab-btn { padding: 8px 16px; border: none; background: transparent; color: var(--text-muted); font-weight: bold; cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 0.9rem; }
@@ -96,7 +96,7 @@
 
 <div class="container">
   
-  <!-- بطاقة رفض الوصول المطابقة للديزاين المرفق -->
+  <!-- بطاقة رفض الوصول -->
   <div id="access-denied">
     <div class="error-title">
       <span>عذراً، الوصول غير متاح!</span>
@@ -140,7 +140,7 @@
     restaurant: [
       { en: "A table for two, please.", ar: "طاولة لشخصين من فضلك." },
       { en: "Could we see the menu, please?", ar: "هل يمكننا رؤية قائمة الطعام من فضلك؟" },
-      { en: "I'd like to order, please.", ar: "أود أن أطلب الطعام من فضلك." },
+      { en: "I'd like to order, please.", ar: "أود أن أطلب الطعام من فضلك؟" },
       { en: "Could I have the check, please?", ar: "هل يمكنني الحصول على الفاتورة من فضلك؟" },
       { en: "Everything was delicious, thank you!", ar: "كان كل شيء لذيذاً، شكراً لك!" }
     ],
@@ -181,7 +181,7 @@
     ]
   };
 
-  // ==================== نظام التحقق والمؤقت والأمان ====================
+  // ==================== نظام التحقق والمؤقت مع معالجة فارق التوقيت ====================
   function checkSecurity() {
     const urlParams = new URLSearchParams(window.location.search);
     const uid = urlParams.get('uid');
@@ -194,17 +194,19 @@
       return;
     }
 
-    // 2. التحقق من انتهاء الصلاحية (5 دقائق = 300,000 مللي ثانية)
+    // 2. التحقق من صلاحية الوقت (15 دقيقة = 900,000 مللي ثانية) مع مراعاة فارق الساعات بين السيرفر والجهاز
     const currentTime = Date.now();
     const linkTime = parseInt(time, 10);
-    const maxAge = 5 * 60 * 1000;
+    const maxAge = 15 * 60 * 1000;
 
-    if (isNaN(linkTime) || (currentTime - linkTime) > maxAge) {
+    const timeDifference = Math.abs(currentTime - linkTime);
+
+    if (isNaN(linkTime) || timeDifference > maxAge) {
       showDenied();
       return;
     }
 
-    // 3. التحقق من بصمة الجهاز لمنع تداول الرابط
+    // 3. التحقق من بصمة الجهاز لمنع مشاركة الرابط
     const savedUid = localStorage.getItem('fluently_user');
     if (savedUid && savedUid !== uid) {
       showDenied();
