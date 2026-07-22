@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منصة التحدث بطلاقة | أهم الجمل اليومية</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <!-- مكتبة التشفير SHA-256 الآمنة -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <style>
     :root {
       --primary: #4F46E5;
-      --primary-hover: #4338CA;
       --bg: #0F172A;
       --card-bg: #1E293B;
       --text: #F8FAFC;
@@ -24,7 +25,7 @@
     header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 6px; }
     header p { color: var(--text-muted); font-size: 0.9rem; }
 
-    /* بطاقة مرفوض الدخول (طابق للبطاقة المرفقة في الصورة) */
+    /* بطاقة مرفوض الدخول المطابقة تماماً لتصميمك */
     #access-denied {
       display: none;
       background-color: #210a0e;
@@ -67,7 +68,7 @@
       font-weight: 400;
     }
 
-    /* التنسيقات العامة للموقع */
+    /* أقسام وجمل المنصة */
     .tabs-wrapper { overflow-x: auto; padding-bottom: 8px; margin-bottom: 15px; }
     .tabs { display: flex; gap: 8px; min-width: max-content; background: var(--card-bg); padding: 6px; border-radius: 12px; }
     .tab-btn { padding: 8px 16px; border: none; background: transparent; color: var(--text-muted); font-weight: bold; cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 0.9rem; }
@@ -96,7 +97,6 @@
 
 <div class="container">
   
-  <!-- بطاقة رفض الوصول -->
   <div id="access-denied">
     <div class="error-title">
       <span>عذراً، الوصول غير متاح!</span>
@@ -107,14 +107,12 @@
     </div>
   </div>
 
-  <!-- المحتوى الرئيسي للموقع -->
   <div id="main-content" style="display: none;">
     <header>
       <h1>منصة الجمل الإنجليزية التفاعلية ✨</h1>
       <p>اختر القسم واستمِع للجمل بالسرعة المناسبة لك</p>
     </header>
 
-    <!-- شريط الأقسام -->
     <div class="tabs-wrapper">
       <div class="tabs">
         <button class="tab-btn active" onclick="switchCategory('restaurant')">🍽️ المطعم</button>
@@ -126,7 +124,6 @@
       </div>
     </div>
 
-    <!-- كروت الجمل -->
     <div id="sentences-container" class="sentences-list"></div>
 
     <footer>جميع الحقوق محفوظة منصة Fluently ©</footer>
@@ -135,7 +132,8 @@
 </div>
 
 <script>
-  // ==================== قاعدة البيانات (6 أقسام - 5 جمل) ====================
+  const SECRET_KEY = "my_super_secret_key_ur10"; // نفس المفتاح الموجود في Code.gs
+
   const sentencesData = {
     restaurant: [
       { en: "A table for two, please.", ar: "طاولة لشخصين من فضلك." },
@@ -181,40 +179,38 @@
     ]
   };
 
-  // ==================== نظام التحقق والمؤقت مع معالجة فارق التوقيت ====================
   function checkSecurity() {
     const urlParams = new URLSearchParams(window.location.search);
     const uid = urlParams.get('uid');
     const time = urlParams.get('t');
-    const auth = urlParams.get('auth');
+    const sig = urlParams.get('sig');
 
-    // 1. التحقق من التمرير المكتمل للمتغيرات
-    if (!uid || !time || !auth) {
+    // 1. التثبت من وجود جميع المعلمات
+    if (!uid || !time || !sig) {
       showDenied();
       return;
     }
 
-    // 2. التحقق من صلاحية الوقت (15 دقيقة = 900,000 مللي ثانية) مع مراعاة فارق الساعات بين السيرفر والجهاز
-    const currentTime = Date.now();
+    // 2. التحقق من صلاحية الوقت (15 دقيقة = 900 ثانية)
+    const currentTime = Math.floor(Date.now() / 1000);
     const linkTime = parseInt(time, 10);
-    const maxAge = 15 * 60 * 1000;
+    const timeDiff = Math.abs(currentTime - linkTime);
 
-    const timeDifference = Math.abs(currentTime - linkTime);
-
-    if (isNaN(linkTime) || timeDifference > maxAge) {
+    if (isNaN(linkTime) || timeDiff > 900) {
       showDenied();
       return;
     }
 
-    // 3. التحقق من بصمة الجهاز لمنع مشاركة الرابط
-    const savedUid = localStorage.getItem('fluently_user');
-    if (savedUid && savedUid !== uid) {
+    // 3. إعادة حساب التوقيع ومقارنته بالرابط (ملاحظة: حماية دون الحاجة لـ localStorage)
+    const expectedRaw = uid + "_" + time + "_" + SECRET_KEY;
+    const computedSig = CryptoJS.SHA256(expectedRaw).toString(CryptoJS.enc.Hex);
+
+    if (computedSig !== sig) {
       showDenied();
       return;
     }
 
-    // النجاح
-    localStorage.setItem('fluently_user', uid);
+    // إذا تحققت كافة الشروط، يفتح الموقع فوراً
     document.getElementById('main-content').style.display = 'block';
     renderSentences('restaurant');
   }
@@ -224,7 +220,6 @@
     document.getElementById('main-content').style.display = 'none';
   }
 
-  // ==================== عرض المحتوى والنطق الصوتي ====================
   function renderSentences(category) {
     const container = document.getElementById('sentences-container');
     container.innerHTML = '';
@@ -259,9 +254,7 @@
     window.speechSynthesis.speak(utterance);
   }
 
-  function escapeQuote(str) {
-    return str.replace(/'/g, "\\'");
-  }
+  function escapeQuote(str) { return str.replace(/'/g, "\\'"); }
 
   window.onload = checkSecurity;
 </script>
