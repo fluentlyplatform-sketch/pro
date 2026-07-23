@@ -5,94 +5,439 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منصة التحدث بطلاقة | أهم الجمل اليومية</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="icon" href="f-logo.png">
   <style>
-    :root {
-      --primary: #4F46E5;
-      --bg: #0F172A;
-      --card-bg: #1E293B;
-      --text: #F8FAFC;
-      --text-muted: #94A3B8;
-      --accent: #38BDF8;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 15px; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
 
-    .container { width: 100%; max-width: 750px; margin-top: 10px; }
-    header { text-align: center; margin-bottom: 20px; }
-    header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 6px; }
-    header p { color: var(--text-muted); font-size: 0.9rem; }
+:root {
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-glow: rgba(99, 102, 241, 0.4);
+  --accent: #38bdf8;
+  --accent-green: #10b981;
+  --bg-gradient: linear-gradient(-45deg, #0f172a, #1e1b4b, #0284c7, #0f172a);
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --danger: #ef4444;
+}
 
-    /* واجهة إدخال الرمز */
-    #passcode-screen {
-      background-color: var(--card-bg);
-      border: 1px solid #334155;
-      border-radius: 16px;
-      padding: 35px 20px;
-      text-align: center;
-      margin-top: 40px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Tajawal', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
 
-    .pass-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
-    .pass-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+body {
+  background: var(--bg-gradient);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: var(--text);
+  padding: 15px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
 
-    .pass-input {
-      width: 160px;
-      padding: 12px;
-      font-size: 1.8rem;
-      text-align: center;
-      letter-spacing: 4px;
-      border-radius: 12px;
-      border: 2px solid var(--primary);
-      background: #0f172a;
-      color: #fff;
-      outline: none;
-      font-weight: bold;
-    }
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-    .btn-verify {
-      display: block;
-      width: 100%;
-      max-width: 200px;
-      margin: 20px auto 0;
-      padding: 12px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .btn-verify:hover { background: #4338ca; }
+.container {
+  width: 100%;
+  max-width: 750px;
+  margin-top: 10px;
+}
 
-    .error-msg { color: #f87171; font-size: 0.9rem; margin-top: 15px; display: none; }
+header {
+  text-align: center;
+  margin-bottom: 25px;
+}
 
-    /* أقسام المنصة والجمل */
-    .tabs-wrapper { overflow-x: auto; padding-bottom: 8px; margin-bottom: 15px; }
-    .tabs { display: flex; gap: 8px; min-width: max-content; background: var(--card-bg); padding: 6px; border-radius: 12px; }
-    .tab-btn { padding: 8px 16px; border: none; background: transparent; color: var(--text-muted); font-weight: bold; cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 0.9rem; }
-    .tab-btn.active { background: var(--primary); color: #fff; }
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(to right, #ffffff, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+}
 
-    .sentences-list { display: flex; flex-direction: column; gap: 12px; }
-    .sentence-card { background: var(--card-bg); border: 1px solid #334155; padding: 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .en-text { font-size: 1.15rem; font-weight: 700; color: var(--accent); direction: ltr; text-align: left; }
-    .ar-text { font-size: 0.95rem; color: #E2E8F0; }
-    
-    .actions { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-    
-    .btn-audio {
-      background: #334155; border: none; color: #fff; padding: 6px 12px; border-radius: 6px;
-      cursor: pointer; font-size: 0.82rem; display: flex; align-items: center; gap: 4px; transition: 0.2s;
-    }
-    .btn-audio:hover { background: var(--primary); }
-    .btn-normal { background: #1e293b; border: 1px solid #475569; }
-    .btn-medium { background: #1e1b4b; color: #c7d2fe; border: 1px solid #312e81; }
-    .btn-slow { background: #022c22; color: #99f6e4; border: 1px solid #065f46; }
+header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
 
-    footer { text-align: center; margin-top: 30px; color: var(--text-muted); font-size: 0.8rem; }
+/* واجهة إدخال الرمز الزجاجية */
+#passcode-screen {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 40px 24px;
+  text-align: center;
+  margin-top: 30px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.pass-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.pass-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+}
+
+.pass-input {
+  width: 180px;
+  padding: 14px;
+  font-size: 2rem;
+  text-align: center;
+  letter-spacing: 6px;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.8);
+  color: #fff;
+  outline: none;
+  font-weight: bold;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.pass-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 20px var(--primary-glow), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.shake {
+  animation: shakeAnim 0.4s ease-in-out;
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.5) !important;
+}
+
+@keyframes shakeAnim {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
+
+.btn-verify {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  margin: 25px auto 0;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px var(--primary-glow);
+}
+
+.btn-verify:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px var(--primary-glow);
+}
+
+.error-msg {
+  color: #fca5a5;
+  font-size: 0.9rem;
+  margin-top: 15px;
+  display: none;
+  font-weight: 500;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+#main-content {
+  position: relative;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* أزرار الصوت فوق اليسار مع الشارة الجديدة */
+.voice-selector-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  padding: 10px;
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+}
+
+.gender-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 3px;
+}
+
+.voice-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  border-radius: 9px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.25s ease;
+  font-weight: 600;
+}
+
+.voice-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* خيارات نوع الصوت وتسمية الصوت الأفضل */
+.variant-wrapper {
+  display: flex;
+  gap: 6px;
+}
+
+.variant-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.variant-btn.best {
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.variant-btn.best::after {
+  content: "⭐ الأفضل والأدق";
+  font-size: 0.65rem;
+  background: var(--accent);
+  color: #0f172a;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font-weight: 800;
+  margin-right: 2px;
+}
+
+.variant-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* إصلاح التمرير والسكرول للأقسام بشكل أملس ومضمون */
+.tabs-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch; /* دعم سلس لأجهزة iOS / iPhone */
+  touch-action: pan-x;
+}
+
+/* تخصيص السكرول بار ليصبح أنيقاً وغير مختفي */
+.tabs-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tabs-wrapper::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 10px;
+}
+
+.tabs-wrapper::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(10px);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+}
+
+.tab-btn {
+  padding: 10px 18px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.tab-btn.active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.sentences-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sentence-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  padding: 20px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.sentence-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.en-text {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  direction: ltr;
+  text-align: left;
+  letter-spacing: 0.3px;
+}
+
+.pron-text {
+  font-size: 0.95rem;
+  color: #a7f3d0;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.ar-text {
+  font-size: 1rem;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-audio {
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+}
+
+.btn-normal {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-medium {
+  background: rgba(99, 102, 241, 0.2);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+}
+
+.btn-slow {
+  background: rgba(16, 185, 129, 0.15);
+  color: #a7f3d0;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.btn-audio:hover {
+  transform: scale(1.05);
+}
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 10px;
+  }
+
+  .voice-selector-container {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 20px;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+
   </style>
 </head>
 <body>
@@ -105,11 +450,21 @@
     <div class="pass-desc">أدخل رمز الدخول الموجود في بوت التليجرام:</div>
     <input type="text" id="passcode-input" class="pass-input" placeholder="***">
     <button id="verify-btn" class="btn-verify" onclick="verifyPasscode()">دخول المنصة 🚀</button>
-    <div id="error-msg" class="error-msg">❌ الرمز غير صحيح، يرجى التثبت من الرمز المطلوب في البوت.</div>
+    <div id="error-msg" class="error-msg"> الرمز غير صحيح، يرجى كتابه الرمز الصحيح الذي في القناة.❌</div>
   </div>
 
-  <!-- المحتوى الرئيسي -->
+  <!-- المحتوى الرئيسي (يحتوي الآن على أزرار الصوت لتبدأ مخفية معه) -->
   <div id="main-content" style="display: none;">
+    
+    <!-- حاوية خيارات الصوت (فوق يسار المحتوى الرئيسي) -->
+    <div class="voice-selector-container">
+      <div class="gender-toggle">
+        <button id="btn-male" class="voice-btn active" onclick="setGender('male')">👨 رجل</button>
+        <button id="btn-female" class="voice-btn" onclick="setGender('female')">👩 امرأة</button>
+      </div>
+      <button id="btn-voice-variant" class="variant-btn" onclick="toggleVoiceVariant()">🔄 تغيير الصوت (صوت 1)</button>
+    </div>
+
     <header>
       <h1>منصة الجمل الإنجليزية التفاعلية ✨</h1>
       <p>اختر القسم واستمِع للجمل بالسرعة المناسبة لك</p>
@@ -137,99 +492,443 @@
   // 🔑 الرمز الثابت للمنصة (تأكد أنه مطاق للرمز الموجود في التليجرام)
   const SECRET_PASSCODE = "777";
 
-  const sentencesData = {
-    restaurant: [
-      { en: "A table for two, please.", ar: "طاولة لشخصين من فضلك." },
-      { en: "Could we see the menu, please?", ar: "هل يمكننا رؤية قائمة الطعام من فضلك؟" },
-      { en: "I'd like to order, please.", ar: "أود أن أطلب الطعام من فضلك؟" },
-      { en: "Could I have the check, please?", ar: "هل يمكنني الحصول على الفاتورة من فضلك؟" },
-      { en: "Everything was delicious, thank you!", ar: "كان كل شيء لذيذاً، شكراً لك!" }
-    ],
-    social: [
-      { en: "Hi, nice to meet you!", ar: "مرحباً، سررت بلقائك!" },
-      { en: "Where are you from?", ar: "من أين أنت؟" },
-      { en: "What do you do for a living?", ar: "ما هو مجال عملك؟" },
-      { en: "What are your hobbies?", ar: "ما هي هواياتك؟" },
-      { en: "Let’s keep in touch!", ar: "دعنا نبقى على تواصل!" }
-    ],
-    hospital: [
-      { en: "I need to see a doctor.", ar: "أحتاج لرؤية الطبيب." },
-      { en: "I have a severe headache.", ar: "لدي صداع شديد." },
-      { en: "Where is the nearest pharmacy?", ar: "أين تقع أقرب صيدلية؟" },
-      { en: "How many times a day should I take this medication?", ar: "كم مرة في اليوم يجب أن آخذ هذا الدواء؟" },
-      { en: "I'm allergic to penicillin.", ar: "لدي حساسية من البنسلين." }
-    ],
-    travel: [
-      { en: "Where is the boarding gate?", ar: "أين بوابات الصعود إلى الطائرة؟" },
-      { en: "How do I get to the city center?", ar: "كيف أصل إلى وسط المدينة؟" },
-      { en: "Could you help me with my luggage?", ar: "هل يمكنك مساعدتي في أمتعتي؟" },
-      { en: "Is this seat taken?", ar: "هل هذا المقعد مشغول؟" },
-      { en: "I'd like to book a taxi.", ar: "أود حجز سيارة أجرة." }
-    ],
-    work: [
-      { en: "Let’s schedule a quick meeting.", ar: "دعنا نحدد موعد اجتماع سريع." },
-      { en: "Could you clarify this point?", ar: "هل يمكنك توضيح هذه النقطة؟" },
-      { en: "I’m working on it right now.", ar: "أنا أعمل على ذلك الآن." },
-      { en: "I’ll keep you updated on the progress.", ar: "سأبقتك على اطلاع بآخر التطورات." },
-      { en: "Could you send me the report?", ar: "هل يمكنك إرسال التقرير لي؟" }
-    ],
-    shopping: [
-      { en: "How much does this cost?", ar: "كم سعر هذا؟" },
-      { en: "Do you have this in a larger size?", ar: "هل لديك هذا بمقاس أكبر؟" },
-      { en: "Where are the fitting rooms?", ar: "أين تقع غرف قياس الملابس؟" },
-      { en: "Do you accept credit cards?", ar: "هل تقبلون بطاقات الائتمان؟" },
-      { en: "Can I get a discount on this?", ar: "هل يمكنني الحصول على خصم على هذا؟" }
-    ]
-  };
+ const sentencesData = {
+  restaurant: [
+    { en: "A table for two, please.", ar: "طاولة لشخصين من فضلك.", pron: "أَ تيبل فور تو، بليز" },
+    { en: "Could we see the menu, please?", ar: "هل يمكننا رؤية قائمة الطعام من فضلك؟", pron: "كود وي سي ذي منيو، بليز؟" },
+    { en: "I'd like to order, please.", ar: "أود أن أطلب الطعام من فضلك.", pron: "آيد لايك تو أوردر، بليز" },
+    { en: "Could I have the check, please?", ar: "هل يمكنني الحصول على الفاتورة من فضلك؟", pron: "كود آي هاف ذي تشيك، بليز؟" },
+    { en: "Everything was delicious, thank you!", ar: "كان كل شيء لذيذاً، شكراً لك!", pron: "إفري ثينق ووز ديليشس، ثانك يو!" },
+    { en: "What do you recommend?", ar: "ماذا توصي؟", pron: "وات دو يو ريكوميند؟" },
+    { en: "Is this dish spicy?", ar: "هل هذا الطبق حار؟", pron: "إز ذس دش سبايسي؟" },
+    { en: "I'm a vegetarian.", ar: "أنا نباتي.", pron: "آيم أ فيجيتيريان" },
+    { en: "Can I get some water, please?", ar: "هل يمكنني الحصول على بعض الماء من فضلك؟", pron: "كان آي قيت سم ووتر، بليز؟" },
+    { en: "Do you have any gluten-free options?", ar: "هل لديك خيارات خالية من الغلوتين؟", pron: "دو يو هاف إني غلوتن فري أوبشنز؟" },
+    { en: "This is not what I ordered.", ar: "هذا ليس ما طلبته.", pron: "ذس إز نوت وات آي أوردرد" },
+    { en: "Could we get extra napkins?", ar: "هل يمكننا الحصول على مناديل إضافية؟", pron: "كود وي قيت إكسترا نابكنز؟" },
+    { en: "I'll have the same, please.", ar: "سآخذ نفس الشيء، من فضلك.", pron: "آيل هاف ذي سيم، بليز" },
+    { en: "How long will the food take?", ar: "كم سيستغرق الطعام للوصول؟", pron: "هاو لونق ويل ذي فود تيك؟" },
+    { en: "Can we split the bill?", ar: "هل يمكننا تقسيم الفاتورة؟", pron: "كان وي سبليت ذي بيل؟" },
+    { en: "Do I need a reservation?", ar: "هل أحتاج إلى حجز؟", pron: "دو آي نيد أ ريزيرفيشن؟" },
+    { en: "I would like my steak medium rare.", ar: "أريد اللحم مطهواً بدرجة متوسطة.", pron: "آي وود لايك ماي ستيك ميديوم رير" },
+    { en: "Is service included?", ar: "هل الخدمة مشمولة؟", pron: "إز سيرفس إنكلودد؟" },
+    { en: "Where is the restroom?", ar: "أين دورة المياه؟", pron: "وير إز ذي ريست روم؟" },
+    { en: "Can I take this to go?", ar: "هل يمكنني أخذ هذا سفري؟", pron: "كان آي تيك ذس تو قو؟" },
+    { en: "We are ready to order.", ar: "نحن جاهزون للطلب.", pron: "وي آر ريدي تو أوردر" },
+    { en: "Do you have a kids' menu?", ar: "هل لديكم قائمة طعام للأطفال؟", pron: "دو يو هاف أ كيدز منيو؟" },
+    { en: "Excuse me, waiter!", ar: "معذرة، يا نادل!", pron: "إكسكيوز مي، ويتر!" },
+    { en: "What kind of desserts do you have?", ar: "ما هي أنواع الحلويات لديك؟", pron: "وات كايند أوف ديزيرتس دو يو هاف؟" },
+    { en: "I'd like a glass of fresh orange juice.", ar: "أود كأساً من عصير البرتقال الطازج.", pron: "آيد لايك أ بلاس أوف فريش أورنج جوس" },
+    { en: "Can I pay by card?", ar: "هل يمكنني الدفع بالبطاقة؟", pron: "كان آي باي باي كارد؟" },
+    { en: "Keep the change.", ar: "احتفظ بالباقي.", pron: "كيب ذي تشينج" },
+    { en: "The food is cold.", ar: "الطعام بارد.", pron: "ذي فود إز كولد" },
+    { en: "Could you pass the salt, please?", ar: "هل يمكنك تمرير الملح، من فضلك؟", pron: "كود يو باس ذي سولت، بليز؟" },
+    { en: "We enjoyed our meal very much.", ar: "استمتعنا بوجبتنا كثيراً.", pron: "وي إنجويد أور ميل فيري ماتش" }
+  ],
+  social: [
+    { en: "Hi, nice to meet you!", ar: "مرحباً، سررت بلقائك!", pron: "هاي، نايس تو ميت يو!" },
+    { en: "Where are you from?", ar: "من أين أنت؟", pron: "وير آر يو فروم؟" },
+    { en: "What do you do for a living?", ar: "ما هو مجال عملك؟", pron: "وات دو يو دو فور أ ليفينق؟" },
+    { en: "What are your hobbies?", ar: "ما هي هواياتك؟", pron: "وات آر يور هوبيز؟" },
+    { en: "Let’s keep in touch!", ar: "دعنا نبقى على تواصل!", pron: "ليتس كيب إن تاتش!" },
+    { en: "How are you doing today?", ar: "كيف حالك اليوم؟", pron: "هاو آر يو دوينق توداي؟" },
+    { en: "What do you like to do in your free time?", ar: "ماذا تحب أن تفعل في وقت فراغك؟", pron: "وات دو يو لايك تو دو إن يور فري تايم؟" },
+    { en: "Have you been here before?", ar: "هل زرت هذا المكان من قبل؟", pron: "هاف يو بين هير بيفور؟" },
+    { en: "That's awesome!", ar: "هذا رائع!", pron: "ذاتس أوسم!" },
+    { en: "What's your phone number?", ar: "ما هو رقم هاتفك؟", pron: "واتس يور فون نمبر؟" },
+    { en: "Are you on social media?", ar: "هل أنت متواجد على وسائل التواصل الاجتماعي؟", pron: "آر يو أون سوشيال ميديا؟" },
+    { en: "How long have you lived here?", ar: "منذ متى وانت تعيش هنا؟", pron: "هاو لونق هاف يو ليفد هير؟" },
+    { en: "It was great talking to you.", ar: "كان من الرائع الحديث معك.", pron: "إت ووز قريت توكينق تو يو" },
+    { en: "What's your favorite music?", ar: "ما هي موسيقاك المفضلة؟", pron: "واتس يور فيفوريت ميوزك؟" },
+    { en: "Do you have any brothers or sisters?", ar: "هل لديك أي إخوة أو أخوات؟", pron: "دو يو هاف إني براذرز أور سيسترز؟" },
+    { en: "See you later!", ar: "أراك لاحقاً!", pron: "سي يو ليتر!" },
+    { en: "Take care!", ar: "اعتنِ بنفسك!", pron: "تيك كير!" },
+    { en: "What are your plans for the weekend?", ar: "ما هي خططك لنهاية الأسبوع؟", pron: "وات آر يور بلانز فور ذي ويك إند؟" },
+    { en: "Sorry to bother you.", ar: "آسف للإزعاج.", pron: "سوري تو باذر يو" },
+    { en: "Congratulations!", ar: "تهانينا!", pron: "كونقراتشوليشنز!" },
+    { en: "Happy birthday!", ar: "عيد ميلاد سعيد!", pron: "هابي بيرثداي!" },
+    { en: "That sounds like fun!", ar: "يبدو ذلك ممتعاً!", pron: "ذات ساوندز لايك فن!" },
+    { en: "I couldn't agree more.", ar: "أتفق معك تماماً.", pron: "آي كودنت إقري مور" },
+    { en: "What do you think about this?", ar: "ما رأيك في هذا؟", pron: "وات دو يو ثينك أباوت ذس؟" },
+    { en: "Where do you usually hang out?", ar: "أين تقضي وقتك عادةً؟", pron: "وير دو يو يوجوالي هانق أوت؟" },
+    { en: "Give me a call sometime.", ar: "اتصل بي في وقت ما.", pron: "قيف مي أ كول سم تايم" },
+    { en: "I really appreciate your help.", ar: "أقدر مساعدة حقاً.", pron: "آي ريلي أبريشييت يور هيلب" },
+    { en: "No problem at all!", ar: "لا مشكلة على الإطلاق!", pron: "نو بروبلم أات أول!" },
+    { en: "It's a small world!", ar: "العالم صغير!", pron: "إتس أ سمول وورلد!" },
+    { en: "Have a safe trip!", ar: "رحلة آمنة!", pron: "هاف أ سيف تريب!" }
+  ],
+  hospital: [
+    { en: "I need to see a doctor.", ar: "أحتاج لرؤية الطبيب.", pron: "آي نيد تو سي أ دوكتور" },
+    { en: "I have a severe headache.", ar: "لدي صداع شديد.", pron: "آي هاف أ سيفير هيديك" },
+    { en: "Where is the nearest pharmacy?", ar: "أين تقع أقرب صيدلية؟", pron: "وير إز ذي نيرست فارماسي؟" },
+    { en: "How many times a day should I take this medication?", ar: "كم مرة في اليوم يجب أن آخذ هذا الدواء؟", pron: "هاو ميني تايمز أ داي شود آي تيك ذس ميديكيشن؟" },
+    { en: "I'm allergic to penicillin.", ar: "لدي حساسية من البنسلين.", pron: "آيم ألمرجيك تو بينيسيلين" },
+    { en: "I feel dizzy.", ar: "أشعر بالدوار.", pron: "آي فيل ديزي" },
+    { en: "Where does it hurt?", ar: "أين مكان الألم؟", pron: "وير دوز إت هيرت؟" },
+    { en: "I have a fever and a cough.", ar: "لدي حمى وسعال.", pron: "آي هاف أ فيفر أند أ كوف" },
+    { en: "Call an ambulance, please!", ar: "اتصل بالإسعاف من فضلك!", pron: "كول أن أمبيولانس، بليز!" },
+    { en: "I have insurance.", ar: "لدي تأمين صحي.", pron: "آي هاف إنشورنس" },
+    { en: "My stomach hurts.", ar: "في معدتي ألم.", pron: "ماي ستومك هيرتس" },
+    { en: "Is it serious?", ar: "هل الأمر خطير؟", pron: "إز إت سيريوس؟" },
+    { en: "I need a prescription for this.", ar: "أحتاج وصفة طبية لهذا.", pron: "آي نيد أ بريسكريبشن فور ذس" },
+    { en: "How long have you felt this way?", ar: "منذ متى وأنت تشعر بهذا الشكل؟", pron: "هاو لونق هاف يو فيلت ذس واي؟" },
+    { en: "I broke my arm.", ar: "كسرت ذراعي.", pron: "آي بروك ماي أرم" },
+    { en: "Do I need a surgery?", ar: "هل أحتاج إلى عملية جراحية؟", pron: "دو آي نيد أ سيرجري؟" },
+    { en: "Take a deep breath.", ar: "خذ خذ نفساً عميقاً.", pron: "تيك أ ديب بريث" },
+    { en: "I'm pregnant.", ar: "أنا حامل.", pron: "آيم بريقنانت" },
+    { en: "I need a blood test.", ar: "أحتاج إلى تحليل دم.", pron: "آي نيد أ بلاد تيست" },
+    { en: "When will the results be ready?", ar: "متى ستكون النتائج جاهزة؟", pron: "وين ويل ذي ريزالتس بي ريدي؟" },
+    { en: "Can you give me something for the pain?", ar: "هل يمكنك إعطائي شيئاً لتخفيف الألم؟", pron: "كان يو قيف مي سمثينق فور ذي بين؟" },
+    { en: "I have high blood pressure.", ar: "لدي ارتفاع في ضغط الدم.", pron: "آي هاف هاي بلاد بريشر" },
+    { en: "I can't sleep at night.", ar: "لا أستطيع النوم ليلاً.", pron: "آي كانت سليب أتم نايت" },
+    { en: "Is there any side effect?", ar: "هل هناك أي أعراض جانبية؟", pron: "إز ذير إني سايد إيفيكت؟" },
+    { en: "I feel nauseous.", ar: "أشعر بالغثيان.", pron: "آي فيل نوسيوس" },
+    { en: "Where is the emergency room?", ar: "أين غرفة الطوارئ؟", pron: "وير إز ذي إيمرجنسي روم؟" },
+    { en: "I need to cancel my appointment.", ar: "أحتاج إلى إلغاء موعدي.", pron: "آي نيد تو كنسل ماي أباينتمنت" },
+    { en: "Please lie down on the bed.", ar: "يرجى الاستلقاء على السرير.", pron: "بليز لاي داون أون ذي بيد" },
+    { en: "I'm feeling much better today.", ar: "أشعر بتحسن كبير اليوم.", pron: "آيم فيلينق ماتش بيتر توداي" },
+    { en: "Drink plenty of fluids.", ar: "اشرب الكثير من السوائل.", pron: "درينك بلنتي أوف فلودز" }
+  ],
+  travel: [
+    { en: "Where is the boarding gate?", ar: "أين بوابة الصعود إلى الطائرة؟", pron: "وير إز ذي بورقينق قيت؟" },
+    { en: "How do I get to the city center?", ar: "كيف أصل إلى وسط المدينة؟", pron: "هاو دو آي قيت تو ذي سيتي سنتر؟" },
+    { en: "Could you help me with my luggage?", ar: "هل يمكنك مساعدتي في أمتعتي؟", pron: "كود يو هيلب مي وذ ماي لوقج؟" },
+    { en: "Is this seat taken?", ar: "هل هذا المقعد مشغول؟", pron: "إز ذس سيت تيكن؟" },
+    { en: "I'd like to book a taxi.", ar: "أود حجز سيارة أجرة.", pron: "آيد لايك تو بوك أ تاكسي" },
+    { en: "Where is the passport control?", ar: "أين مكتب مراقبة الجوازات؟", pron: "وير إز ذي باسبورت كونترول؟" },
+    { en: "My flight has been delayed.", ar: "تم تأخير رحلتي.", pron: "ماي فلايت هاز بين ديلايد" },
+    { en: "I lost my passport.", ar: "لقد فقدت جواز سفري.", pron: "آي لوست ماي باسبورت" },
+    { en: "Where can I exchange money?", ar: "أين يمكنني تصريف العملات؟", pron: "وير كان آي إكسشينج ماني؟" },
+    { en: "How much is the fare?", ar: "كم قيمة الأجرة؟", pron: "هاو ماتش إز ذي فير؟" },
+    { en: "Is there a bus stop nearby?", ar: "هل توجد محطة حافلات قريبة؟", pron: "إز ذير أ باس ستوب نيرباي؟" },
+    { en: "I have a hotel reservation.", ar: "لدي حجز في الفندق.", pron: "آي هاف أ أوتيل ريزيرفيشن" },
+    { en: "What time is check-in?", ar: "في أي وقت يبدأ تسجيل الوصول؟", pron: "وات تايم إز تشيك إن؟" },
+    { en: "Can I have a map of the city?", ar: "هل يمكنني الحصول على خريطة للمدينة؟", pron: "كان آي هاف أ ماب أوف ذي سيتي؟" },
+    { en: "Where is baggage claim?", ar: "أين منطقة استلام الأمتعة؟", pron: "وير إز باقاج كليم؟" },
+    { en: "I'm traveling for vacation.", ar: "أنا أسافر من أجل قضاء العطلة.", pron: "آيم ترافلينق فور فاكيشن" },
+    { en: "Where can I rent a car?", ar: "أين يمكنني استئجار سيارة؟", pron: "وير كان آي رينت أ كار؟" },
+    { en: "How far is it from here?", ar: "كم يبعد هذا المكان من هنا؟", pron: "هاو فار إز إت فروم هير؟" },
+    { en: "Is Wi-Fi available here?", ar: "هل خدمة الواي فاي متوفرة هنا؟", pron: "إز واي فاي أفيلابل هير؟" },
+    { en: "Which way is to the train station?", ar: "أي طريق يؤدي إلى محطة القطار؟", pron: "ويتش واي إز تو ذي ترين ستشين؟" },
+    { en: "Could you take a photo of us, please?", ar: "هل يمكنك التقاط صورة لنا من فضلك؟", pron: "كود يو تيك أ فوتو أوف أس، بليز؟" },
+    { en: "I need to check out of the hotel.", ar: "أحتاج لإتمام إجراءات المغادرة من الفندق.", pron: "آي نيد تو تشيك أوت أوف ذي أوتيل" },
+    { en: "Are there any good tourist spots around?", ar: "هل هناك أي أماكن سياحية جيدة في الجوار؟", pron: "آر ذير إني قود تورست سبوتس أراوند؟" },
+    { en: "Please take me to this address.", ar: "يرجى أخذي إلى هذا العنوان.", pron: "بليز تيك مي تو ذس أدرس" },
+    { en: "Is breakfast included?", ar: "هل وجبة الإفطار مشمولة؟", pron: "إز بريكفاست إنكلودد؟" },
+    { en: "My window seat, please.", ar: "المقعد المجاور للنافذة، من فضلك.", pron: "ماي ويندو سيت، بليز" },
+    { en: "Where can I buy tickets?", ar: "أين يمكنني شراء التذاكر؟", pron: "وير كان آي باي تيكتس؟" },
+    { en: "Is the flight on time?", ar: "هل الطائرة في موعدها؟", pron: "إز ذي فلايت أون تايم؟" },
+    { en: "I'd like a round-trip ticket.", ar: "أريد تذكرة ذهاب وإياب.", pron: "آيد لايك أ راوند تريب تيكت" },
+    { en: "Enjoy your stay!", ar: "إقامة ممتعة!", pron: "إنجوي يور ستاي!" }
+  ],
+  work: [
+    { en: "Let’s schedule a quick meeting.", ar: "دعنا نحدد موعد اجتماع سريع.", pron: "ليتس سكيديول أ كويك ميتينق" },
+    { en: "Could you clarify this point?", ar: "هل يمكنك توضيح هذه النقطة؟", pron: "كود يو كلاريفاي ذس بوينت؟" },
+    { en: "I’m working on it right now.", ar: "أنا أعمل على ذلك الآن.", pron: "آيم وركينق أون إت رايت ناو" },
+    { en: "I’ll keep you updated on the progress.", ar: "سأبقيك على اطلاع بآخر التطورات.", pron: "آيل كيب يو أبديتد أون ذي بروقرس" },
+    { en: "Could you send me the report?", ar: "هل يمكنك إرسال التقرير لي؟", pron: "كود يو سيند مي ذي ريبورت؟" },
+    { en: "What's the deadline for this project?", ar: "ما هو الموعد النهائي لهذا المشروع؟", pron: "واتس ذي ديدلاين فور ذس بروجيكت؟" },
+    { en: "I agree with your suggestion.", ar: "أنا أتفق مع اقتراحك.", pron: "آي إقري وذ يور سوجيستشن" },
+    { en: "Let's discuss this tomorrow.", ar: "فلنناقش هذا الغد.", pron: "ليتس ديسكاس ذس تومورو" },
+    { en: "Can you forward that email to me?", ar: "هل يمكنك توجيه ذلك البريد الإلكتروني إلي؟", pron: "كان يو فورورد ذات إيميل تو مي؟" },
+    { en: "I will be on leave next week.", ar: "سأكون في إجازة الأسبوع القادم.", pron: "آي ويل بي أون ليف نيكست ويك" },
+    { en: "Let's brainstorm some ideas.", ar: "دعنا نقوم بالعصف الذهني لبعض الأفكار.", pron: "ليتس برين ستورم سم آيدياز" },
+    { en: "I'll take care of it.", ar: "سأهتم بالأمر.", pron: "آيل تيك كير أوف إت" },
+    { en: "Sorry, I was on mute.", ar: "عذراً، كنت على وضع الكتم.", pron: "سوري، آي ووز أون ميوت" },
+    { en: "Can everyone see my screen?", ar: "هل يستطيع الجميع رؤية شاشتي؟", pron: "كان إفري ون سي ماي سكرين؟" },
+    { en: "Let's stick to the agenda.", ar: "دعنا نلتزم بجدول الأعمال.", pron: "ليتس ستيك تو ذي أجندا" },
+    { en: "I'll get back to you soon.", ar: "سأعود إليك في أسرع وقت.", pron: "آيل قيت باك تو يو سون" },
+    { en: "Who is responsible for this task?", ar: "من هو المسؤول عن هذه المهمة؟", pron: "هو إز ريسبونسِبل فور ذس تاسك؟" },
+    { en: "We need to finish this today.", ar: "نحتاج لإنجاز هذا اليوم.", pron: "وي نيد تو فينش ذس توداي" },
+    { en: "Thank you for your hard work.", ar: "شكراً لك على عملك الجاد.", pron: "ثانك يو فور يور هارد وورك" },
+    { en: "I have a presentation today.", ar: "لدي العرض التقديمي اليوم.", pron: "آي هاف أ بريزنتيشن توداي" },
+    { en: "Please review this document.", ar: "يرجى مراجعة هذه الوثيقة.", pron: "بليز ريفيو ذس دوكيومنت" },
+    { en: "Let me know if you have any questions.", ar: "أخبرني إذا كان لديك أي أسئلة.", pron: "ليت مي نو إف يو هاف إني كويستشنز" },
+    { en: "We made good progress today.", ar: "حققت نجاحاً وإنجازاً جيدا اليوم.", pron: "وي ميد قود بروقرس توداي" },
+    { en: "Can we reschedule the call?", ar: "هل يمكننا إعادة جدولة المكالمة؟", pron: "كان وي ريسكيديول ذي كول؟" },
+    { en: "I'm running a bit late.", ar: "أنا متأخر قليلاً.", pron: "آيم رانينق أ بيت ليت" },
+    { en: "Please sign the contract here.", ar: "يرجى توقيع العقد هنا.", pron: "بليز ساين ذي كونتراكت هير" },
+    { en: "What are our main priorities?", ar: "ما هي أولوياتنا الرئيسية؟", pron: "وات آر أور مين برايرتيز؟" },
+    { en: "I will double-check that.", ar: "سوف أتحقق من ذلك مجدداً.", pron: "آي ويل دبل تشيك ذات" },
+    { en: "Good job, team!", ar: "عمل رائع يا فريق!", pron: "قود جوب، تيم!" },
+    { en: "Let's wrap up this meeting.", ar: "دعنا ننهي هذا الاجتماع.", pron: "ليتس راب أب ذس ميتينق" }
+  ],
+  shopping: [
+    { en: "How much does this cost?", ar: "كم سعر هذا؟", pron: "هاو ماتش دوز ذس كوست؟" },
+    { en: "Do you have this in a larger size?", ar: "هل لديك هذا بمقاس أكبر؟", pron: "دو يو هاف ذس إن أ لارجر سايز؟" },
+    { en: "Where are the fitting rooms?", ar: "أين تقع غرف قياس الملابس؟", pron: "وير آر ذي فيتينق رومز؟" },
+    { en: "Do you accept credit cards?", ar: "هل تقبلون بطاقات الائتمان؟", pron: "دو يو أكسيبت كريدت كاردز؟" },
+    { en: "Can I get a discount on this?", ar: "هل يمكنني الحصول على خصم على هذا؟", pron: "كان آي قيت أ ديسكاونت أون ذس؟" },
+    { en: "I'm just looking, thanks.", ar: "أنا فقط أستكشف، شكراً.", pron: "آيم جست لوكينق، ثانكس" },
+    { en: "Do you have this in another color?", ar: "هل لديك هذا بلون آخر؟", pron: "دو يو هاف ذس إن أناذر كلر؟" },
+    { en: "Where is the cashier?", ar: "أين الصندوق (الكاشير)؟", pron: "وير إز ذي كاشير؟" },
+    { en: "Can I try this on?", ar: "هل يمكنني قياس هذا؟", pron: "كان آي تراي ذس أون؟" },
+    { en: "It fits perfectly!", ar: "إنه يناسبني تماماً!", pron: "إت فيتس بيرفكتلي!" },
+    { en: "It's too expensive.", ar: "إنه غالي الثمن جداً.", pron: "إتس تو إكسبنسف" },
+    { en: "Do you have anything cheaper?", ar: "هل لديك أي شيء أرخص؟", pron: "دو يو هاف إني ثينق تشيبر؟" },
+    { en: "I'll take it.", ar: "سآخذه.", pron: "آيل تيك إت" },
+    { en: "Can I return this if it doesn't fit?", ar: "هل يمكنني إرجاع هذا إذا لم يناسبني؟", pron: "كان آي ريتيرن ذس إف إت دوزنت فيت؟" },
+    { en: "Do you have a receipt?", ar: "هل معك إيصال الشراء؟", pron: "دو يو هاف أ ريسيت؟" },
+    { en: "Are these items on sale?", ar: "هل هذه السلع عليها تخفيضات؟", pron: "آر ذيز آيتمز أون سيل؟" },
+    { en: "Can I have a plastic bag, please?", ar: "هل يمكنني الحصول على كيس بلاستيكي من فضلك؟", pron: "كان آي هاف أ بلاستيك باق، بليز؟" },
+    { en: "Do you sell gift cards?", ar: "هل تبيعون بطاقات الهدايا؟", pron: "دو يو سيل قفت كاردز؟" },
+    { en: "What time do you close?", ar: "في أي وقت تغلقون؟", pron: "وات تايم دو يو كلوز؟" },
+    { en: "This item is damaged.", ar: "هذا المنتج تالف.", pron: "ذس آيتم إز دامجد" },
+    { en: "Where can I find shoes?", ar: "أين يمكنني العثور على الأحذية؟", pron: "وير كان آي فايند شوز؟" },
+    { en: "Could you gift-wrap this for me?", ar: "هل يمكنك تغليف هذا كهدية لي؟", pron: "كود يو قفت راب ذس فور مي؟" },
+    { en: "Is there a warranty for this product?", ar: "هل يوجد ضمان لهذا المنتج؟", pron: "إز ذير أ وارانتي فور ذس برودكت؟" },
+    { en: "I'd like to exchange this, please.", ar: "أود استبدال هذا، من فضلك.", pron: "آيد لايك تو إكستشينج ذس، بليز" },
+    { en: "Do you have a smaller size?", ar: "هل لديك مقاس أصغر؟", pron: "دو يو هاف أ سمولر سايز؟" },
+    { en: "Is this made of real leather?", ar: "هل هذا مصنوع من الجلد الطبيعي؟", pron: "إز ذس ميد أوف ريل ليذر؟" },
+    { en: "Can you hold this for me for an hour?", ar: "هل يمكنك حجز هذا لي لمدة ساعة؟", pron: "كان يو هولد ذس فور مي فور أن أور؟" },
+    { en: "The price tag is missing.", ar: "بطاقة السعر مفقودة.", pron: "ذي برايس تاق إز ميسينق" },
+    { en: "Where is the elevator?", ar: "أين المصعد؟", pron: "وير إز ذي إيليفيتر؟" },
+    { en: "Thank you for your help!", ar: "شكراً لك على مساعدتك!", pron: "ثانك يو فور يور هيلب!" }
+  ]
+};
 
-  function verifyPasscode() {
-    const inputVal = document.getElementById('passcode-input').value.trim();
-    const errorMsg = document.getElementById('error-msg');
+  // 🛡️ 1. منع قائمة الكليك يمين (Right-Click)
+document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+});
 
-    if (inputVal === SECRET_PASSCODE) {
-      document.getElementById('passcode-screen').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      renderSentences('restaurant');
-    } else {
-      errorMsg.style.display = 'block';
+// 🛡️ 2. منع اختصارات أدوات الفحص (Inspect Element & View Source)
+document.addEventListener('keydown', function (e) {
+  // F12
+  if (e.key === 'F12' || e.keyCode === 123) {
+    e.preventDefault();
+  }
+  // Ctrl+Shift+I / Cmd+Opt+I (Inspect Element)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) {
+    e.preventDefault();
+  }
+  // Ctrl+Shift+J / Cmd+Opt+J (Console)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) {
+    e.preventDefault();
+  }
+  // Ctrl+U (View Source Code)
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) {
+    e.preventDefault();
+  }
+});
+
+function verifyPasscode() {
+  const inputVal = document.getElementById('passcode-input').value.trim();
+  const errorMsg = document.getElementById('error-msg');
+
+  if (inputVal === SECRET_PASSCODE) {
+    document.getElementById('passcode-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    
+    // إظهار خيارات الصوت بعد كتابة الرمز الصحيح
+    const voiceSelector = document.querySelector('.voice-selector-container');
+    if (voiceSelector) {
+      voiceSelector.style.display = 'flex';
     }
+
+    renderSentences('restaurant');
+  } else {
+    errorMsg.style.display = 'block';
+  }
+}
+function renderSentences(category) {
+  const container = document.getElementById('sentences-container');
+  container.innerHTML = '';
+
+  sentencesData[category].forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'sentence-card';
+    card.innerHTML = `
+      <div class="en-text">${item.en}</div>
+      <div class="pron-text">${item.pron || ''}</div>
+      <div class="ar-text">${item.ar}</div>
+      <div class="actions">
+        <button class="btn-audio btn-normal" onclick="speak('${escapeQuote(item.en)}', 0.9)">⚡ عادي</button>
+        <button class="btn-audio btn-medium" onclick="speak('${escapeQuote(item.en)}', 0.7)">🎧 متوسط</button>
+        <button class="btn-audio btn-slow" onclick="speak('${escapeQuote(item.en)}', 0.5)">🐢 بطيء</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function switchCategory(cat) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (window.event && window.event.target) {
+    window.event.target.classList.add('active');
+  }
+  renderSentences(cat);
+}
+
+function speak(text, rate) {
+  // إيقاف أي قراءة سابقة فوراً
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = rate; // سرعة القراءة
+  utterance.pitch = 1.0; // نبرة الصوت الطبيعية
+
+  // اختيار أفضل صوت متاح في متصفح المستخدم للغة الإنجليزية
+  const voices = window.speechSynthesis.getVoices();
+  const preferredVoice = voices.find(v => 
+    v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Zira'))
+  ) || voices.find(v => v.lang.startsWith('en'));
+
+  if (preferredVoice) {
+    utterance.voice = preferredVoice;
   }
 
-  function renderSentences(category) {
-    const container = document.getElementById('sentences-container');
-    container.innerHTML = '';
+  window.speechSynthesis.speak(utterance);
+}
 
-    sentencesData[category].forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'sentence-card';
-      card.innerHTML = `
-        <div class="en-text">${item.en}</div>
-        <div class="ar-text">${item.ar}</div>
-        <div class="actions">
-          <button class="btn-audio btn-normal" onclick="speak('${escapeQuote(item.en)}', 1.0)">⚡ عادي</button>
-          <button class="btn-audio btn-medium" onclick="speak('${escapeQuote(item.en)}', 0.8)">🎧 متوسط</button>
-          <button class="btn-audio btn-slow" onclick="speak('${escapeQuote(item.en)}', 0.6)">🐢 بطيء</button>
-        </div>
-      `;
-      container.appendChild(card);
-    });
+// التأكد من تحميل الأصوات في المتصفح فور جاهزيتها
+if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+
+function escapeQuote(str) { 
+  return str.replace(/'/g, "\\'"); 
+}
+
+
+  let currentGender = 'male'; // الافتراضي رجل
+let currentVariantIndex = 0; // 0 للصوت الأول، 1 للصوت الثاني
+let availableVoices = [];
+
+// جلب وتحديث الأصوات المتاحة في المتصفح
+function loadVoices() {
+  if (typeof speechSynthesis !== 'undefined') {
+    availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+  }
+}
+
+if (typeof speechSynthesis !== 'undefined') {
+  loadVoices();
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+}
+
+// تغيير الجنس (رجل / امرأة)
+function setGender(gender) {
+  currentGender = gender;
+  currentVariantIndex = 0; // إعادة الضبط للصوت الأول
+  
+  document.getElementById('btn-male').classList.toggle('active', gender === 'male');
+  document.getElementById('btn-female').classList.toggle('active', gender === 'female');
+  
+  updateVariantButtonText();
+}
+
+// التبديل بين الصوت الأول والثاني لنفس الجنس
+function toggleVoiceVariant() {
+  currentVariantIndex = currentVariantIndex === 0 ? 1 : 0;
+  updateVariantButtonText();
+}
+
+function updateVariantButtonText() {
+  const btn = document.getElementById('btn-voice-variant');
+  btn.innerText = `🔄 تغيير الصوت (صوت ${currentVariantIndex + 1})`;
+}
+
+// فلترة واختيار الصوت المناسب
+function getSelectedVoice() {
+  if (availableVoices.length === 0) loadVoices();
+
+  // الكلمات المفتاحية للتعرف على نوع الصوت في مختلف الأجهزة والمتصفحات
+  const maleKeywords = ['male', 'david', 'mark', 'george', 'james', 'guy', 'google us english'];
+  const femaleKeywords = ['female', 'zira', 'samantha', 'victoria', 'karen', 'caren', 'susan', 'hazel'];
+
+  let filteredVoices = availableVoices.filter(v => {
+    const name = v.name.toLowerCase();
+    if (currentGender === 'male') {
+      return maleKeywords.some(key => name.includes(key)) || !femaleKeywords.some(key => name.includes(key));
+    } else {
+      return femaleKeywords.some(key => name.includes(key));
+    }
+  });
+
+  // في حال لم يجد أصوات كافية، يعود لجميع الأصوات الإنجليزية
+  if (filteredVoices.length === 0) filteredVoices = availableVoices;
+
+  // اختيار الصوت (1 أو 2) حسب التحديد
+  return filteredVoices[currentVariantIndex % filteredVoices.length] || availableVoices[0];
+}
+
+function speak(text, rate) {
+  window.speechSynthesis.cancel(); // إيقاف أي صوت سابق
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = rate;
+  utterance.pitch = currentGender === 'male' ? 0.95 : 1.1; // تعديل بسيط للنبرة لضمان وضوح خامة الصوت
+
+  const selectedVoice = getSelectedVoice();
+  if (selectedVoice) {
+    utterance.voice = selectedVoice;
   }
 
-  function switchCategory(cat) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    renderSentences(cat);
-  }
+  window.speechSynthesis.speak(utterance);
+}
 
-  function speak(text, rate) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = rate;
-    window.speechSynthesis.speak(utterance);
-  }
+function renderSentences(category) {
+  const container = document.getElementById('sentences-container');
+  container.innerHTML = '';
 
-  function escapeQuote(str) { return str.replace(/'/g, "\\'"); }
+  sentencesData[category].forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'sentence-card';
+    card.innerHTML = `
+      <div class="en-text">${item.en}</div>
+      <div class="pron-text">${item.pron || ''}</div>
+      <div class="ar-text">${item.ar}</div>
+      <div class="actions">
+        <button class="btn-audio btn-normal" onclick="speak('${escapeQuote(item.en)}', 0.9)">⚡ عادي</button>
+        <button class="btn-audio btn-medium" onclick="speak('${escapeQuote(item.en)}', 0.7)">🎧 متوسط</button>
+        <button class="btn-audio btn-slow" onclick="speak('${escapeQuote(item.en)}', 0.5)">🐢 بطيء</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function switchCategory(cat) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (window.event && window.event.target) {
+    window.event.target.classList.add('active');
+  }
+  renderSentences(cat);
+}
+
+function escapeQuote(str) { 
+  return str.replace(/'/g, "\\'"); 
+}
+
+
+function verifyPasscode() {
+  const inputElem = document.getElementById('passcode-input');
+  const inputVal = inputElem.value.trim();
+  const errorMsg = document.getElementById('error-msg');
+
+  if (inputVal === SECRET_PASSCODE) {
+    document.getElementById('passcode-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    renderSentences('restaurant');
+  } else {
+    // إظهار الرسالة وتفعيل أنيميشن الاهتزاز الخطأ
+    errorMsg.style.display = 'block';
+    inputElem.classList.add('shake');
+
+    // إزالة كلاس الأنيميشن بعد انتهائه لإعادة استخدامه مرة أخرى
+    setTimeout(() => {
+      inputElem.classList.remove('shake');
+    }, 400);
+  }
+}
+
+
+
 </script>
 
 </body>
