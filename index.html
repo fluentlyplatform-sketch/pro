@@ -223,7 +223,7 @@ header p {
   box-shadow: 0 4px 12px var(--primary-glow);
 }
 
-/* خيارات نوع الصوت وتسمية الصوت الأفضل */
+
 .variant-wrapper {
   display: flex;
   gap: 6px;
@@ -249,16 +249,6 @@ header p {
   color: #fff;
 }
 
-.variant-btn.best::after {
-  content: "⭐ الأفضل والأدق";
-  font-size: 0.65rem;
-  background: var(--accent);
-  color: #0f172a;
-  padding: 1px 5px;
-  border-radius: 6px;
-  font-weight: 800;
-  margin-right: 2px;
-}
 
 .variant-btn:hover {
   background: rgba(255, 255, 255, 0.15);
@@ -489,8 +479,8 @@ footer {
 </div>
 
 <script>
-  // 🔑 الرمز الثابت للمنصة (تأكد أنه مطاق للرمز الموجود في التليجرام)
-  const SECRET_PASSCODE = "777";
+
+
 
  const sentencesData = {
   restaurant: [
@@ -712,25 +702,7 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-function verifyPasscode() {
-  const inputVal = document.getElementById('passcode-input').value.trim();
-  const errorMsg = document.getElementById('error-msg');
 
-  if (inputVal === SECRET_PASSCODE) {
-    document.getElementById('passcode-screen').style.display = 'none';
-    document.getElementById('main-content').style.display = 'block';
-    
-    // إظهار خيارات الصوت بعد كتابة الرمز الصحيح
-    const voiceSelector = document.querySelector('.voice-selector-container');
-    if (voiceSelector) {
-      voiceSelector.style.display = 'flex';
-    }
-
-    renderSentences('restaurant');
-  } else {
-    errorMsg.style.display = 'block';
-  }
-}
 function renderSentences(category) {
   const container = document.getElementById('sentences-container');
   container.innerHTML = '';
@@ -906,27 +878,55 @@ function escapeQuote(str) {
 }
 
 
+// 🔑 المفتاح السرّي المشترك (طابق تماماً المفتاح المكتوب في البوت)
+const SHARED_SECRET = "FLUENTLY_SECRET_KEY_12345";
+
+// دالة حساب الرمز المتزامن مع السيرفر/البوت
+function generateDynamicPasscode(offsetSteps = 0) {
+  const timeStep = Math.floor(Date.now() / 1000 / 30) + offsetSteps; // نافذة 30 ثانية
+  let hash = 0;
+  const seedStr = SHARED_SECRET + "_" + timeStep;
+  
+  for (let i = 0; i < seedStr.length; i++) {
+    hash = (hash * 31 + seedStr.charCodeAt(i)) & 0xFFFFFFFF;
+  }
+  
+  hash = ((hash >> 16) ^ hash) * 0x45d9f3b;
+  hash = ((hash >> 16) ^ hash) * 0x45d9f3b;
+  hash = (hash >> 16) ^ hash;
+  
+  const code = Math.abs(hash) % 1000;
+  return String(code).padStart(3, '0');
+}
+
 function verifyPasscode() {
   const inputElem = document.getElementById('passcode-input');
   const inputVal = inputElem.value.trim();
   const errorMsg = document.getElementById('error-msg');
 
-  if (inputVal === SECRET_PASSCODE) {
+  // قبول الرمز الحالي أو الرمز الذي انتهى للتو قبل لحظات لتفادي مشاكل التأخير
+  const currentCode = generateDynamicPasscode(0);
+  const previousCode = generateDynamicPasscode(-1);
+
+  if (inputVal === currentCode || inputVal === previousCode) {
     document.getElementById('passcode-screen').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
+
+    const voiceSelector = document.querySelector('.voice-selector-container');
+    if (voiceSelector) {
+      voiceSelector.style.display = 'flex';
+    }
+
     renderSentences('restaurant');
   } else {
-    // إظهار الرسالة وتفعيل أنيميشن الاهتزاز الخطأ
     errorMsg.style.display = 'block';
     inputElem.classList.add('shake');
 
-    // إزالة كلاس الأنيميشن بعد انتهائه لإعادة استخدامه مرة أخرى
     setTimeout(() => {
       inputElem.classList.remove('shake');
     }, 400);
   }
 }
-
 
 
 </script>
